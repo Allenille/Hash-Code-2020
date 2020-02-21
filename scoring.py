@@ -9,17 +9,18 @@ def total_score_library(library: Library):
 
 
 def efficiency_library(library: Library, remaining_days_total):
-    total_days_library = (library.books_per_day * library.number_of_books) + library.sign_up_days
-    if total_days_library < remaining_days_total:
-        return efficiency_remaining_days(remaining_days_total, library)
+    # calcul du nombre de jour nécéssaire pour écouler tous les livres de la lib
+    total_days_library = (library.number_of_books / library.books_per_day )
+    # si le nombre de jour necéssaire est inf au nombre de jour restant (en comptant le temps de signup)
+    if total_days_library < remaining_days_total - library.sign_up_days:
+        return efficiency_remaining_days(remaining_days_total - library.sign_up_days, library) / (total_days_library + library.sign_up_days)
     else:
-        return total_score_library(library) / total_days_library
+        return total_score_library(library) / (remaining_days_total + library.sign_up_days)
 
 
-def efficiency_remaining_days(days: int, library: Library):
+def efficiency_remaining_days(days_to_scan: int, library: Library):
     score = 0
-    days_of_scan = days - library.sign_up_days
-    books_scanned = days_of_scan * library.books_per_day
+    books_scanned = days_to_scan * library.books_per_day
     list_books = library.book_list
     for i in range(books_scanned):
         if i < len(list_books):
